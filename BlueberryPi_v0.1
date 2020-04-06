@@ -6,7 +6,17 @@ import bluetooth
 
 #Testing blueborne code from https://github.com/ojasookert/CVE-2017-0785/blob/master/CVE-2017-0785.py
 def scanMAC(macAddr):
-    return None
+
+    sock=bluetooth.BluetoothSocket(bluetooth.L2CAP)
+
+    bd_addr = macAddr
+    port = 0x1001
+
+    sock.connect((bd_addr, port))
+
+    sock.send("hello!!")
+
+    sock.close()
     # service_long = 0x0100
     # service_short = 0x0001
     # mtu = 50
@@ -61,6 +71,32 @@ def scanAll():
 
     for addr, name in nearby_devices:
         print(f'{addr}  -   {name}')
+
+#Scan services of all available bluetooth devices in range based on uuid value. Second arg for one device only
+def scanUUIDServices(uuidVal, addr = None){
+    service_matches = bluetooth.find_service(uuid = uuidVal, bdaddr = addr)
+
+    if len(service_matches == 0):
+        printf(f'No services matching {uuidVal} found.')
+
+    else:
+        print(f'|{'Host'^:10}|{'Name'^:10}|{'Protocol'^:10}|{'Port'^:10}|')
+        for match in service_matches:
+            print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
+}
+
+#Scan services of all available bluetooth devices in range based on name. Second arg for one device only
+def scanNameServices(nameVal, addr = None){
+    service_matches = bluetooth.find_service(name = nameVal, bdaddr = addr)
+
+    if len(service_matches == 0):
+        printf(f'No services matching {uuidVal} found.')
+
+    else:
+        print(f'|{'Host'^:10}|{'Name'^:10}|{'Protocol'^:10}|{'Port'^:10}|')
+        for match in service_matches:
+            print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
+}
 
 #Verifies if input is a MAC address
 def isMACAddress(input):
