@@ -3,6 +3,8 @@ import pwn
 import socket
 import argparse
 import bluetooth
+import scanBlueberry as scanB
+
 
 # #Testing blueborne code from https://github.com/ojasookert/CVE-2017-0785/blob/master/CVE-2017-0785.py
 # def scanMAC(macAddr):
@@ -62,77 +64,6 @@ import bluetooth
 #     #
 #     # print(hexdump(stack))
 
-#Scans all nearby bluetooth devices, return list of MACS and Device Names(if available). Devices must be in discoverable mode. Does not work with low power Bluetooth
-def scanAll():
-    #Standard ble check
-    nearby_devices = bluetooth.discover_devices(lookup_names=True)
-
-    print(f'found {len(nearby_devices)}')
-
-    for addr, name in nearby_devices:
-        print(f'{addr}  -   {name}')
-
-#Scan all available Bluetooth connections for all available services
-def scanAllServices():
-    results = bluetooth.find_service(name = None, uuid = None, address = None)
-
-    host = "Host"
-    name = "Name"
-    description = "Description"
-    provider = "Provider"
-    protocol = "Protocol"
-    port = "Port"
-    service_classes = "Service Classes"
-    profiles = "Profiles"
-    print(f"|{host:^20}|{name:^25}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}")
-    for match in results:
-        host = "None" if match["host"] is None else match["host"]
-        name = "None" if match["name"] is None else match["name"]
-        description = "None" if match["description"] is None else match["description"]
-        provider = "None" if match["provider"] is None else match["provider"]
-        protocol = "None" if match["protocol"] is None else match["protocol"]
-        port = "None" if match["port"] is None else match["port"]
-        service_classes = "None" if match["service-classes"] is None else match["service-classes"]
-        profiles = "None" if match["profiles"] is None else match["profiles"]
-        print(f"|{host:^20}|{name:^25}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}")
-
-#Scan services of all available bluetooth devices in range based on uuid value. Second arg for one device only
-def scanUUIDServices(uuidVal, addr = None):
-    service_matches = bluetooth.find_service(uuid = uuidVal, bdaddr = addr)
-
-    if len(service_matches == 0):
-        printf(f'No services matching {uuidVal} found.')
-    else:
-        host = "Host"
-        name = "Name"
-        protocol = "Protocol"
-        port = "Port"
-        print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
-        for match in service_matches:
-            host = "None" if match["host"] is None else match["host"]
-            name = "None" if match["name"] is None else match["name"]
-            protocol = "None" if match["protocol"] is None else match["protocol"]
-            port = "None" if match["port"] is None else match["port"]
-            print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
-
-#Scan services of all available bluetooth devices in range based on name. Second arg for one device only
-def scanNameServices(nameVal, addr = None):
-    service_matches = bluetooth.find_service(name = nameVal, bdaddr = addr)
-
-    if len(service_matches == 0):
-        printf(f'No services matching {uuidVal} found.')
-    else:
-        host = "Host"
-        name = "Name"
-        protocol = "Protocol"
-        port = "Port"
-        print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
-        for match in service_matches:
-            host = "None" if match["host"] is None else match["host"]
-            name = "None" if match["name"] is None else match["name"]
-            protocol = "None" if match["protocol"] is None else match["protocol"]
-            port = "None" if match["port"] is none else None["port"]
-            print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
 
 #Verifies if input is a UUID of style 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
 def isUUID(input):
@@ -179,10 +110,10 @@ def main():
 
     #Stuff
     if(input is not None):
-        scanMAC(input)
+        scanB.scanMAC(input)
     else:
-        scanAll()
-        scanAllServices()
+        scanB.scanAll()
+        scanB.scanAllServices()
 
 
 
