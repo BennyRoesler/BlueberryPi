@@ -76,8 +76,25 @@ def scanAll():
 def scanAllServices():
     results = bluetooth.find_service(name = None, uuid = None, address = None)
 
-    for item in results:
-        print(item)
+    host = "Host"
+    name = "Name"
+    description = "Description"
+    provider = "Provider"
+    protocol = "Protocol"
+    port = "Port"
+    service_classes = "Service Classes"
+    profiles = "Profiles"
+    print(f"|{host:^20}|{name:^25}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}")
+    for match in results:
+        host = "None" if match["host"] is None else match["host"]
+        name = "None" if match["name"] is None else match["name"]
+        description = "None" if match["description"] is None else match["description"]
+        provider = "None" if match["provider"] is None else match["provider"]
+        protocol = "None" if match["protocol"] is None else match["protocol"]
+        port = "None" if match["port"] is None else match["port"]
+        service_classes = "None" if match["service-classes"] is None else match["service-classes"]
+        profiles = "None" if match["profiles"] is None else match["profiles"]
+        print(f"|{host:^20}|{name:^25}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}")
 
 #Scan services of all available bluetooth devices in range based on uuid value. Second arg for one device only
 def scanUUIDServices(uuidVal, addr = None):
@@ -85,11 +102,18 @@ def scanUUIDServices(uuidVal, addr = None):
 
     if len(service_matches == 0):
         printf(f'No services matching {uuidVal} found.')
-     #not working properly
-    # else:
-    #     print(f"|{"Host"^:10}|{"Name"^:10}|{"Protocol"^:10}|{"Port"^:10}|"")
-    #     for match in service_matches:
-    #         print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
+    else:
+        host = "Host"
+        name = "Name"
+        protocol = "Protocol"
+        port = "Port"
+        print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
+        for match in service_matches:
+            host = "None" if match["host"] is None else match["host"]
+            name = "None" if match["name"] is None else match["name"]
+            protocol = "None" if match["protocol"] is None else match["protocol"]
+            port = "None" if match["port"] is None else match["port"]
+            print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
 
 #Scan services of all available bluetooth devices in range based on name. Second arg for one device only
 def scanNameServices(nameVal, addr = None):
@@ -97,11 +121,18 @@ def scanNameServices(nameVal, addr = None):
 
     if len(service_matches == 0):
         printf(f'No services matching {uuidVal} found.')
-    #not working properly
-    # else:
-    #     print(f'|{"Host"^:10}|{"Name"^:10}|{"Protocol"^:10}|{"Port"^:10}|')
-    #     for match in service_matches:
-    #         print(f'|{match["host"]^:10}|{match["name"]^:10}|{match["protocol"]^:10}|{match["port"]^:10}|')
+    else:
+        host = "Host"
+        name = "Name"
+        protocol = "Protocol"
+        port = "Port"
+        print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
+        for match in service_matches:
+            host = "None" if match["host"] is None else match["host"]
+            name = "None" if match["name"] is None else match["name"]
+            protocol = "None" if match["protocol"] is None else match["protocol"]
+            port = "None" if match["port"] is none else None["port"]
+            print(f"|{host:^20}|{name:^25}|{protocol:^20}|{port:^20}|")
 
 #Verifies if input is a UUID of style 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
 def isUUID(input):
