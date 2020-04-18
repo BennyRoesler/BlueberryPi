@@ -4,7 +4,7 @@ import printBlueberry as printB
 #Scans all nearby bluetooth devices, return list of MACS and Device Names(if available). Devices must be in discoverable mode. Does not work with low power Bluetooth
 def scanAll():
     #Standard ble check
-    nearby_devices = bluetooth.discover_devices(lookup_names=True)
+    nearby_devices = bluetooth.discover_devices(duration = 10, lookup_names=True)
 
     print(f'found {len(nearby_devices)}')
 
@@ -14,6 +14,11 @@ def scanAll():
 #Scan all available Bluetooth connections for all available services
 def scanAllServices():
     results = bluetooth.find_service(name = None, uuid = None, address = None)
+
+    printB.printServices(results)
+
+def scanOneServices(addr):
+    results = bluetooth.find_service(name = None, uuid = None, address = addr)
 
     printB.printServices(results)
 
