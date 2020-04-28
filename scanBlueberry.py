@@ -40,7 +40,7 @@ def scanNameService(nameVal, addr = None):
     service_matches = bluetooth.find_service(name = nameVal, bdaddr = addr)
 
     if len(service_matches == 0):
-        print(f'No services matching {uuidVal} found.')
+        print(f'No services matching {nameVal} found.')
     else:
         printB.printServices(service_matches)
 
@@ -53,6 +53,7 @@ def getMan(macAddr):
     for index, data in df.iterrows():
         if tempAddr.upper().startswith(data['Assignment']):
             print(data['Organization Name'])
+
 
 def continousScan(timeoutseconds = 10, csvlocation = "/tmp/Blueberry-DiscoveredDevices.csv"):
     try:
