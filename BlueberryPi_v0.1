@@ -4,6 +4,12 @@ import argparse
 import bluetooth
 import scanBlueberry as scanB
 
+from paramiko import SSHClient
+from scp import SCPClient
+
+import random
+import os
+
 #Verifies if input is a UUID of style 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
 def isUUID(input):
     if input.count("-")!=4:
@@ -41,8 +47,28 @@ def parseArgs():
     else:
         return None
 
+# SCP a file to the CS department
+def scp(csvlocation="/tmp/Blueberry-DiscoveredDevices.csv", host="bangkok.cs.colostate.edu", remotepath="/tmp"):
+    ssh = SSHClient()
+    ssh.load_system_host_keys()
+    ssh.connect(host, username="roeslerb", key_filename="BlueberrySSH")
+    scp = SCPClient(ssh.get_transport())
+    scp.put(csvlocation, remote_path=remotepath)
+    scp.close()
+
+def ascii_art():
+    dir = 'ascii_art'
+    filename = random.choice(os.listdir(dir))
+    path = os.path.join(dir, filename)
+
+    art = open(path, "r")
+    print(art.read())
+
+
 #Main section
 def main():
+    #Print random ASCII art
+    ascii_art()
 
     #Parse arguments
     input = parseArgs();
@@ -54,6 +80,7 @@ def main():
         scanB.scanAll()
         scanB.scanAllServices()
 
+    scp()
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,17 @@
+ __^__                                                              __^__
+( ___ )-----------------Colorado State University------------------( ___ )
+ | / |           Spring 2019 - CS 370 - Operating Systems           | \ |
+ | / |                       Team Alfa Romeo                        | \ |
+ | / |                                                              | \ |
+ | / | Benny Roesler           	Email: Benny.Roesler@colostate.edu  | \ |
+ | / | CS Username: roeslerb    eID: roeslerb                       | \ |
+ | / |                                                              | \ |
+ | / | Rex Steele               Email: Rex.Steele@colostate.edu     | \ |
+ | / | CS Username: rexsteel	eID: rexsteel                       | \ |
+ | / |--------------------------------------------------------------| \ |
+ | / | This week's quote:                                           | \ |
+ |___|       And God said "E=MC^2" and there was light....          |___|
+(_____)------------------------------------------------------------(_____)
+   ^                                                                  ^
+   Thanks to Jon Biddell of University of NSW for the ASCII art
+
