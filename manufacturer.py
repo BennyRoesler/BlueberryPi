@@ -8,3 +8,4 @@ def getMan(macAddr):
     for index, data in df.iterrows():
         if tempAddr.upper().startswith(data['Assignment']):
             print(data['Organization Name'])
+
