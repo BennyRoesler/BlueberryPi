@@ -28,24 +28,9 @@ def isMACAddress(input):
         return False
     for section in input.split(":"):
         for char in section:
-            if char>"F" or (char<"A" and not char.isdigit()) or len(section)!=2:
+            if char.upper()>"F" or (char.upper()<"A" and not char.isdigit()) or len(section)!=2:
                 return False
     return True
-
-#Parse arguments, verify valid format
-def parseArgs():
-    parser = argparse.ArgumentParser(description='Scan given MAC address for Bluetooth vulnerabilites, or scan for all bluetooth devices in range and in discovery mode.')
-    parser.add_argument('MAC', nargs='?', help='MAC Address of Bluetooth device to scan for vulnerabilites')
-
-    args = parser.parse_args();
-    if args.MAC is not None:
-        if isMACAddress(args.MAC):
-            return args.MAC
-        else:
-            print("Usage: BlueberryPi_v0.1 [XX:XX:XX:XX:XX:XX]")
-            exit(1)
-    else:
-        return None
 
 # SCP a file to the CS department
 def scp(csvlocation="/tmp/Blueberry-DiscoveredDevices.csv", host="bangkok.cs.colostate.edu", remotepath="/tmp"):
@@ -67,28 +52,32 @@ def ascii_art():
 
 #Main section
 def main():
+    #Parse arguments
+    parser = argparse.ArgumentParser(description='Scan for nearby Bluetooth devices, gather information on the device services and manufacturer, log to output file')
+    parser.add_argument('-m', '--mac', metavar='<MAC address>',
+                        help='MAC address of specific device to scan services of. If provided, will not initiate primary scan')
+    parser.add_argument('-t', '--time', metavar='<time to scan>', type=int, default=10,
+                        help='Set length of time to scan, default is 10 seconds.')
+    parser.add_argument('-o', '--output', metavar='<output csv>', default='/tmp/Blueberry-DiscoveredDevices.csv',
+                        help='Name of CSV file to output data. Will create if it does not exist, \
+                        otherwise will add to the existing given file. Default is /tmp/Blueberry-DiscoveredDevices.csv')
+    parser.add_argument('-a', '--async', action='store_true',
+                        help='Initiates scan to be done asynchronously')
+
+
+    args = parser.parse_args();
+
     #Print random ASCII art
     ascii_art()
 
-    #Parse arguments
-    input = parseArgs();
-
-    #Stuff
-    if(input is not None):
-        scanB.scanMAC(input)
+    #initiate scanning based on flags
+    if args.mac:
+        scanB.scanOneService(args.mac)
     else:
-        scanB.scanAll()
-        scanB.scanAllServices()
-
-    scp()
+        if args.async:
+            scanB.asyncScan(args.time, args.output)
+        else:
+            scanB.continuousScan(args.time, args.output)
 
 if __name__ == '__main__':
     main()
-
-    # from bluetooth.ble import DiscoveryService
-    #
-    # service = DiscoveryService()
-    # devices = service.discover(2)
-    #
-    # for address, name in devices.items():
-    #     print("Name: {}, address: {}".format(name, address))

@@ -4,17 +4,15 @@ import printBlueberry as printB
 import csv
 import prettytable
 import signal
+import time
+import datetime
+import select
 
+#standard all scan, no writing to CSV
+def scanAll(timeoutseconds=10):
+    nearby_devices = bluetooth.discover_devices(duration=timeoutseconds, lookup_names=True)
 
-# Scans all nearby bluetooth devices, return list of MACS and Device Names(if available). Devices must be in discoverable mode. Does not work with low power Bluetooth
-def scanAll():
-    # Standard ble check
-    nearby_devices = bluetooth.discover_devices(duration=10, lookup_names=True)
-
-    print(f'Found {len(nearby_devices)} devices')
-
-    for addr, name in nearby_devices:
-        print(f'{addr}  -   {name}')
+    return nearby_devices
 
 
 # Scan all available Bluetooth connections for all available services
@@ -27,19 +25,19 @@ def scanAllServices():
 
     printB.printServices(results)
 
-
+# Scan services for singular macAddr
 def scanOneService(addr):
     results = bluetooth.find_service(name=None, uuid=None, address=addr)
 
     if len(results) == 0:
-        print(f'Unable to find "{addr}"')
+        print(f'Unable to find "{addr}" for scan of services')
         return
 
-    printB.printServices(results)
+    return results
 
 
-# Scan services of all available bluetooth devices in range based on uuid value. Second arg for one device only
-def scanUUIDService(uuidVal, addr=None):
+# Scan services of all available bluetooth devices in range based on uuid value.
+def scanUUIDService(uuidVal):
     service_matches = bluetooth.find_service(uuid=uuidVal, bdaddr=addr)
 
     if len(service_matches == 0):
@@ -48,8 +46,8 @@ def scanUUIDService(uuidVal, addr=None):
         printB.printServices(service_matches)
 
 
-# Scan services of all available bluetooth devices in range based on name. Second arg for one device only
-def scanNameService(nameVal, addr=None):
+# Scan services of all available bluetooth devices in range based on name.
+def scanNameService(nameVal):
     service_matches = bluetooth.find_service(name=nameVal, bdaddr=addr)
 
     if len(service_matches == 0):
@@ -68,8 +66,43 @@ def getMan(macAddr):
         if tempAddr.upper().startswith(data['Assignment']):
             return data['Organization Name']
 
+# Standard continuous scan
+def continuousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.csv"):
+    ''' File I/O'''
+    CSVfile = open(csvlocation, 'w+')
+    file = csv.writer(CSVfile)
+
+    ''' Init local var'''
+    table = prettytable.PrettyTable(["MAC Address", "Device Name"])
+
+    print(f'Scan will automatically end in {timeoutseconds} seconds')
+
+    results = scanAll(timeoutseconds)
+
+    """ Writes to CSV """
+    for resultAddr, resultName in results:
+        host = resultAddr
+        name = resultName
+        manuf = getMan(host)
+        print(f'FOUND: {host} - {name} - {manuf}')
+        services = scanOneService(host)
+
+        if services is not None:
+            table.add_row([host, name])
+            printB.writeCSV(host, name, manuf, services, file)
+        else:
+            table.add_row([host, name])
+            print(f"Service scan of {host} was unsuccesful, only writing basic data.")
+
+    print('Finishing Scan')
+    print(f"{len(results)} devices found")
+    print('Raw CSV is located: ', csvlocation)
+    CSVfile.close()
+    print(table)
+    exit(1)
+
 # Repeatedly scans for devices
-def continousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.csv"):
+def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.csv"):
     try:
         ''' File I/O'''
         CSVfile = open(csvlocation, 'w+')
@@ -135,6 +168,3 @@ def continousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevic
 """ Used to send an TimeoutError exception to be caught by continousScan """
 def timeouthandler(signum, frame):
     raise TimeoutError()
-
-
-continousScan(timeoutseconds=30)
