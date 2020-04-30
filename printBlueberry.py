@@ -5,7 +5,7 @@ import datetime
 #Formatted printing for services.
 def printServices(services):
     if(len(services) == 0):
-        print("No results")
+        print("No results", flush=True)
     else:
         host = "Host"
         name = "Name"
@@ -16,7 +16,7 @@ def printServices(services):
         port = "Port"
         service_classes = "Service Classes"
         profiles = "Profiles"
-        print(f"|{host:^20}|{name:^30}|{manuf:^20}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}")
+        print(f"|{host:^20}|{name:^30}|{manuf:^20}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}", flush=True)
         for match in services:
             host = "None" if match["host"] is None else match["host"]
             name = "None" if match["name"] is None else match["name"]
@@ -25,7 +25,7 @@ def printServices(services):
             provider = "None" if match["provider"] is None else match["provider"]
             protocol = "None" if match["protocol"] is None else match["protocol"]
             port = "None" if match["port"] is None else match["port"]
-            print(f"|{host:^20}|{name:^30}|{manuf:^20}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}")
+            print(f"|{host:^20}|{name:^30}|{manuf:^20}|{description:^20}|{provider:^20}|{protocol:^20}|{port:^20}", flush=True)
 
 # Writes results to csv
 def writeCSV(host, name, manuf, services, file):

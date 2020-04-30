@@ -20,7 +20,7 @@ def scanAllServices():
     results = bluetooth.find_service(name=None, uuid=None, address=None)
 
     if len(results) == 0:
-        print("No devices found")
+        print("No devices found", flush=True)
         return
 
     printB.printServices(results)
@@ -30,7 +30,7 @@ def scanOneService(addr):
     results = bluetooth.find_service(name=None, uuid=None, address=addr)
 
     if len(results) == 0:
-        print(f'Unable to find "{addr}" for scan of services')
+        print(f'Unable to find "{addr}" for scan of services', flush=True)
         return
 
     return results
@@ -41,7 +41,7 @@ def scanUUIDService(uuidVal):
     service_matches = bluetooth.find_service(uuid=uuidVal, bdaddr=addr)
 
     if len(service_matches == 0):
-        print(f'No services matching {uuidVal} found.')
+        print(f'No services matching {uuidVal} found.', flush=True)
     else:
         printB.printServices(service_matches)
 
@@ -51,7 +51,7 @@ def scanNameService(nameVal):
     service_matches = bluetooth.find_service(name=nameVal, bdaddr=addr)
 
     if len(service_matches == 0):
-        print(f'No services matching {nameVal} found.')
+        print(f'No services matching {nameVal} found.', flush=True)
     else:
         printB.printServices(service_matches)
 
@@ -68,14 +68,14 @@ def getMan(macAddr):
 
 # Standard continuous scan
 def continuousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.csv"):
-    ''' File I/O'''
+    ''' File I/O '''
     CSVfile = open(csvlocation, 'w+')
     file = csv.writer(CSVfile)
 
     ''' Init local var'''
     table = prettytable.PrettyTable(["MAC Address", "Device Name"])
 
-    print(f'Scan will automatically end in {timeoutseconds} seconds')
+    print(f'Scan will automatically end in {timeoutseconds} seconds', flush=True)
 
     results = scanAll(timeoutseconds)
 
@@ -92,10 +92,10 @@ def continuousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevi
             printB.writeCSV(host, name, manuf, services, file)
         else:
             table.add_row([host, name])
-            print(f"Service scan of {host} was unsuccesful, only writing basic data.")
+            print(f"Service scan of {host} was unsuccesful, only writing basic data.", flush=True)
 
-    print('Finishing Scan')
-    print(f"{len(results)} devices found")
+    print('Finishing Scan', flush=True)
+    print(f"{len(results)} devices found", flush=True)
     print('Raw CSV is located: ', csvlocation)
     CSVfile.close()
     print(table)
@@ -112,8 +112,8 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
         printed = []
         table = prettytable.PrettyTable(["MAC Address", "Device Name"])
 
-        print(f'Scan will automatically end in {timeoutseconds} seconds')
-        print("Press CTRL+C (Keyboard Interrupt) to end scan early\n")
+        print(f'Scan will automatically end in {timeoutseconds} seconds', flush=True)
+        print("Press CTRL+C (Keyboard Interrupt) to end scan early\n", flush=True)
         signal.signal(signal.SIGALRM, timeouthandler)  # raises a SIGALRM then calls function timeouthandler
         signal.setitimer(signal.ITIMER_REAL, timeoutseconds)  # second param is timer in seconds
 
@@ -142,24 +142,24 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
                     host = i['host']
                     name = i['name']
                     table.add_row([host, name])
-                    print(f'Discovered:', host)
+                    print(f'Discovered:', host, flush=True)
                     printed.append(host)
 
 
     except KeyboardInterrupt:
-        print('\nUser Interrupt Detected')
-        print('Finishing Scan')
-        print(f"{len(printed)} devices found")
-        print('Raw CSV is located: ', csvlocation)
+        print('\nUser Interrupt Detected', flush=True)
+        print('Finishing Scan', flush=True)
+        print(f"{len(printed)} devices found", flush=True)
+        print('Raw CSV is located: ', csvlocation, flush=True)
         CSVfile.close()
-        print(table)
+        print(table, flush=True)
         exit(1)
 
     except TimeoutError:
-        print('Time is up!')
-        print('Finishing Scan')
-        print(f"{len(printed)} devices found")
-        print('Raw CSV is located: ', csvlocation)
+        print('Time is up!', flush=True)
+        print('Finishing Scan', flush=True)
+        print(f"{len(printed)} devices found", flush=True)
+        print('Raw CSV is located: ', csvlocation, flush=True)
         CSVfile.close()
         print(table)
         exit(1)
