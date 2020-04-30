@@ -34,6 +34,8 @@ def isMACAddress(input):
 
 # SCP a file to the CS department
 def scp(csvlocation="/tmp/Blueberry-DiscoveredDevices.csv", host="bangkok.cs.colostate.edu", remotepath="/tmp"):
+
+    print(f"SCP {csvlocation} to {host}:{remotepath} ")
     ssh = SSHClient()
     ssh.load_system_host_keys()
     ssh.connect(host, username="roeslerb", key_filename="BlueberrySSH")
@@ -72,12 +74,15 @@ def main():
 
     #initiate scanning based on flags
     if args.mac:
-        scanB.scanOneService(args.mac)
+        print(scanB.scanOneService(args.mac, args.output))
     else:
         if args.asynchronous:
             scanB.asyncScan(args.time, args.output)
         else:
             scanB.continuousScan(args.time, args.output)
+
+    # SCP to cs dept
+    scp(csvlocation=args.output)
 
 if __name__ == '__main__':
     main()

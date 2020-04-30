@@ -11,7 +11,6 @@ import select
 #standard all scan, no writing to CSV
 def scanAll(timeoutseconds=10):
     nearby_devices = bluetooth.discover_devices(duration=timeoutseconds, lookup_names=True)
-
     return nearby_devices
 
 
@@ -26,12 +25,35 @@ def scanAllServices():
     printB.printServices(results)
 
 # Scan services for singular macAddr
-def scanOneService(addr):
+def scanOneService(addr, csvlocation="/tmp/Blueberry-DiscoveredDevices.csv"):
+
+    print(f'Scanning for {addr} in the area')
+
     results = bluetooth.find_service(name=None, uuid=None, address=addr)
 
+    print("Scan complete")
     if len(results) == 0:
         print(f'Unable to find "{addr}" for scan of services', flush=True)
-        return
+        exit(1)
+
+    CSVfile = open(csvlocation, 'w+')
+    file = csv.writer(CSVfile)
+    
+    """ Writes to CSV """
+    for i in results:
+        host = i['host']
+        name = i['name']
+        manuf = getMan(host)
+        serviceClass = i["service-classes"]
+        profiles = i["profiles"]
+        description = i['description']
+        provider = i['provider']
+        serviceID = i['service-id']
+        protocol = i['protocol']
+        port = i['port']
+        file.writerow(
+            [host, name, manuf, serviceClass, profiles, description, provider, serviceID, protocol, port])
+    print('Raw CSV is located: ', csvlocation, flush=True)
 
     return results
 
@@ -99,7 +121,6 @@ def continuousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevi
     print('Raw CSV is located: ', csvlocation, flush=True)
     CSVfile.close()
     print(table, flush=True)
-    exit(1)
 
 # Repeatedly scans for devices
 def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.csv"):
@@ -118,10 +139,11 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
         signal.setitimer(signal.ITIMER_REAL, timeoutseconds)  # second param is timer in seconds
 
         while True:
-            results = bluetooth.find_service(name=None, uuid=None, address=None)
+            devices_results = scanAll(timeoutseconds)
+            service_results = bluetooth.find_service(name=None, uuid=None, address=None)
 
             """ Writes to CSV """
-            for i in results:
+            for i in service_results:
                 host = i['host']
                 name = i['name']
                 manuf = getMan(host)
@@ -136,13 +158,13 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
                     [host, name, manuf, serviceClass, profiles, description, provider, serviceID, protocol, port])
 
             """ Prints newly found devices to console """
-            for i in results:
-                if i['host'] not in printed:
-                    host = i['host']
-                    name = i['name']
-                    table.add_row([host, name])
-                    print(f'Discovered:', host, flush=True)
+            for resultAddr, resultName in devices_results:
+                if resultAddr not in printed:
+                    host = resultAddr
+                    name = resultName
+                    manuf = getMan(host)
                     printed.append(host)
+                    print(f'FOUND: {host} - {name} - {manuf}', flush=True)
 
 
     except KeyboardInterrupt:
@@ -152,7 +174,6 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
         print('Raw CSV is located: ', csvlocation, flush=True)
         CSVfile.close()
         print(table, flush=True)
-        exit(1)
 
     except TimeoutError:
         print('Time is up!', flush=True)
@@ -161,7 +182,6 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
         print('Raw CSV is located: ', csvlocation, flush=True)
         CSVfile.close()
         print(table, flush=True)
-        exit(1)
 
 
 """ Used to send an TimeoutError exception to be caught by continousScan """
