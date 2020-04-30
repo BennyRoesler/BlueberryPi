@@ -74,7 +74,7 @@ def main():
 
     #initiate scanning based on flags
     if args.mac:
-        print(scanB.scanOneService(args.mac, args.output))
+        scanB.scanOneService(args.mac, args.output)
     else:
         if args.asynchronous:
             scanB.asyncScan(args.time, args.output)
