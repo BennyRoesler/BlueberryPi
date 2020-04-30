@@ -75,7 +75,7 @@ def continuousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevi
     ''' Init local var'''
     table = prettytable.PrettyTable(["MAC Address", "Device Name"])
 
-    print(f'Scan will automatically end in {timeoutseconds} seconds', flush=True)
+    print(f'Continuous Scan will automatically end in {timeoutseconds} seconds', flush=True)
 
     results = scanAll(timeoutseconds)
 
@@ -112,7 +112,7 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
         printed = []
         table = prettytable.PrettyTable(["MAC Address", "Device Name"])
 
-        print(f'Scan will automatically end in {timeoutseconds} seconds', flush=True)
+        print(f'Asynchronous Scan will automatically end in {timeoutseconds} seconds', flush=True)
         print("Press CTRL+C (Keyboard Interrupt) to end scan early\n", flush=True)
         signal.signal(signal.SIGALRM, timeouthandler)  # raises a SIGALRM then calls function timeouthandler
         signal.setitimer(signal.ITIMER_REAL, timeoutseconds)  # second param is timer in seconds
