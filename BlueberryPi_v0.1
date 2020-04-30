@@ -47,7 +47,7 @@ def ascii_art():
     path = os.path.join(dir, filename)
 
     art = open(path, "r")
-    print(art.read())
+    print(art.read(),"\n")
 
 
 #Main section
@@ -61,7 +61,7 @@ def main():
     parser.add_argument('-o', '--output', metavar='<output csv>', default='/tmp/Blueberry-DiscoveredDevices.csv',
                         help='Name of CSV file to output data. Will create if it does not exist, \
                         otherwise will add to the existing given file. Default is /tmp/Blueberry-DiscoveredDevices.csv')
-    parser.add_argument('-a', '--async', action='store_true',
+    parser.add_argument('-a', '--asynchronous', action='store_true',
                         help='Initiates scan to be done asynchronously')
 
 
@@ -74,7 +74,7 @@ def main():
     if args.mac:
         scanB.scanOneService(args.mac)
     else:
-        if args.async:
+        if args.asynchronous:
             scanB.asyncScan(args.time, args.output)
         else:
             scanB.continuousScan(args.time, args.output)
