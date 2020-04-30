@@ -84,7 +84,7 @@ def continuousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevi
         host = resultAddr
         name = resultName
         manuf = getMan(host)
-        print(f'FOUND: {host} - {name} - {manuf}')
+        print(f'FOUND: {host} - {name} - {manuf}', flush=True)
         services = scanOneService(host)
 
         if services is not None:
@@ -92,13 +92,13 @@ def continuousScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevi
             printB.writeCSV(host, name, manuf, services, file)
         else:
             table.add_row([host, name])
-            print(f"Service scan of {host} was unsuccesful, only writing basic data.", flush=True)
+            print(f"Service scan of {host} was unsuccessful, only writing basic data.", flush=True)
 
     print('Finishing Scan', flush=True)
     print(f"{len(results)} devices found", flush=True)
-    print('Raw CSV is located: ', csvlocation)
+    print('Raw CSV is located: ', csvlocation, flush=True)
     CSVfile.close()
-    print(table)
+    print(table, flush=True)
     exit(1)
 
 # Repeatedly scans for devices
@@ -118,7 +118,6 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
         signal.setitimer(signal.ITIMER_REAL, timeoutseconds)  # second param is timer in seconds
 
         while True:
-            print("Iteration - Should be scanning for new BT devices - Delete this before turning it in")
             results = bluetooth.find_service(name=None, uuid=None, address=None)
 
             """ Writes to CSV """
@@ -161,7 +160,7 @@ def asyncScan(timeoutseconds=10, csvlocation="/tmp/Blueberry-DiscoveredDevices.c
         print(f"{len(printed)} devices found", flush=True)
         print('Raw CSV is located: ', csvlocation, flush=True)
         CSVfile.close()
-        print(table)
+        print(table, flush=True)
         exit(1)
 
 

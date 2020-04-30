@@ -47,7 +47,7 @@ def ascii_art():
     path = os.path.join(dir, filename)
 
     art = open(path, "r")
-    print(art.read(),"\n")
+    print(art.read(),"\n", flush=True)
 
 
 #Main section
