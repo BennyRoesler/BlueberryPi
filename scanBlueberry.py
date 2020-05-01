@@ -26,7 +26,7 @@ def scanAllServices():
 # Scan services for singular macAddr
 def scanOneService(addr, csvlocation="/tmp/Blueberry-DiscoveredDevices.csv"):
 
-    print(f'Scanning for {addr} in the area')
+    print(f'Scanning for {addr} services in the area')
 
     results = bluetooth.find_service(name=None, uuid=None, address=addr)
 
