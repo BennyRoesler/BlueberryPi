@@ -46,7 +46,7 @@ def scp(csvlocation="/tmp/Blueberry-DiscoveredDevices.csv", host="bangkok.cs.col
 def ascii_art():
     dir = 'ascii_art'
     filename = random.choice(os.listdir(dir))
-    path = os.path.join(dir, filename)
+    path = os.path.join(dir, "team.txt")
 
     art = open(path, "r")
     print(art.read(),"\n", flush=True)
