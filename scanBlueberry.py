@@ -6,7 +6,6 @@ import prettytable
 import signal
 import time
 import datetime
-import select
 
 #standard all scan, no writing to CSV
 def scanAll(timeoutseconds=10):
