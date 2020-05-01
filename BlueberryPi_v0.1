@@ -65,6 +65,8 @@ def main():
                         otherwise will add to the existing given file. Default is /tmp/Blueberry-DiscoveredDevices.csv')
     parser.add_argument('-a', '--asynchronous', action='store_true',
                         help='Initiates scan to be done asynchronously')
+    parser.add_argument('-s', '--scp', action='store_true',
+                        help='Transfer output file over SCP')
 
 
     args = parser.parse_args();
@@ -82,7 +84,8 @@ def main():
             scanB.continuousScan(args.time, args.output)
 
     # SCP to cs dept
-    scp(csvlocation=args.output)
+    if args.scp:
+        scp(csvlocation=args.output)
 
 if __name__ == '__main__':
     main()
